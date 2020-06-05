@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.wumo"
-version = "1.0.2"
+version = "1.0.3"
 
 repositories {
   mavenCentral()
@@ -13,7 +13,6 @@ repositories {
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
   implementation("com.sun.mail:javax.mail:1.6.2")
-  implementation("com.google.gradle:osdetector-gradle-plugin:1.6.2")
 }
 
 tasks {
