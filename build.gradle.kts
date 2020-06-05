@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.wumo"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
   mavenCentral()
@@ -17,10 +17,10 @@ dependencies {
 
 tasks {
   compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "9"
   }
   compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "9"
   }
 }
 
