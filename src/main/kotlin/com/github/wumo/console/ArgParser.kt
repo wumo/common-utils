@@ -131,7 +131,6 @@ open class ArgParser {
         buildString {
           append("Missing values for options:")
           appendln(required.joinToString(",") { it })
-          showUsage()
         }
       }
     } catch(e: Exception) {
