@@ -8,35 +8,43 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 object ProcessHelper {
-  
-  fun run(cmd: String, workDir: File? = null) {
+  fun exec(cmd: String, workDir: File? = null): Int {
     val dir = workDir ?: File(".")
-    if(OS.isWindows)
-      dir.exec("cmd", "/c", "call $cmd")
+    return if(OS.isWindows)
+      exec(dir, "cmd", "/c", "call $cmd")
     else
-      dir.exec("/bin/bash", "-c", cmd)
+      exec(dir, "/bin/bash", "-c", cmd)
   }
   
-  fun File.call(vararg command: String): String {
+  fun eval(cmd: String, workDir: File? = null): Pair<String, Int> {
+    val dir = workDir ?: File(".")
+    return if(OS.isWindows)
+      call(dir, "cmd", "/c", "call $cmd")
+    else
+      call(dir, "/bin/bash", "-c", cmd)
+  }
+  
+  fun call(workDir: File, vararg command: String): Pair<String, Int> {
     val builder = ProcessBuilder(*command)
-    builder.directory(this)
+    builder.directory(workDir)
     builder.redirectErrorStream(true)
     val process: Process = builder.start()
     val input: InputStream = process.inputStream
     val reader = BufferedReader(InputStreamReader(input))
     reader.use {
-      return it.readText()
+      return it.readText() to process.exitValue()
     }
   }
   
-  fun File.exec(vararg command: String) {
+  fun exec(workDir: File, vararg command: String): Int {
     val builder = ProcessBuilder(*command)
-    builder.directory(this)
+    builder.directory(workDir)
     builder.redirectErrorStream(true)
     val process = builder.start()
     val input = process.inputStream
     input.use {
       it.transferTo(System.out)
     }
+    return process.exitValue()
   }
 }
