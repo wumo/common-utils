@@ -8,15 +8,15 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 object ProcessHelper {
-  fun exec(cmd: String, workDir: File? = null): Int {
+  fun exec(cmd: String, workDir: File? = null) {
     val dir = workDir ?: File(".")
-    return if(OS.isWindows)
+    if(OS.isWindows)
       exec(dir, "cmd", "/c", "call $cmd")
     else
       exec(dir, "/bin/bash", "-c", cmd)
   }
   
-  fun eval(cmd: String, workDir: File? = null): Pair<String, Int> {
+  fun eval(cmd: String, workDir: File? = null): String {
     val dir = workDir ?: File(".")
     return if(OS.isWindows)
       call(dir, "cmd", "/c", "call $cmd")
@@ -24,7 +24,7 @@ object ProcessHelper {
       call(dir, "/bin/bash", "-c", cmd)
   }
   
-  fun call(workDir: File, vararg command: String): Pair<String, Int> {
+  fun call(workDir: File, vararg command: String): String {
     val builder = ProcessBuilder(*command)
     builder.directory(workDir)
     builder.redirectErrorStream(true)
@@ -32,11 +32,11 @@ object ProcessHelper {
     val input: InputStream = process.inputStream
     val reader = BufferedReader(InputStreamReader(input))
     reader.use {
-      return it.readText() to process.exitValue()
+      return it.readText()
     }
   }
   
-  fun exec(workDir: File, vararg command: String): Int {
+  fun exec(workDir: File, vararg command: String) {
     val builder = ProcessBuilder(*command)
     builder.directory(workDir)
     builder.redirectErrorStream(true)
@@ -45,6 +45,6 @@ object ProcessHelper {
     input.use {
       it.transferTo(System.out)
     }
-    return process.exitValue()
+    check(process.exitValue() == 0) { "error exec $command" }
   }
 }
