@@ -3,7 +3,6 @@ package com.github.wumo.console
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.typeOf
 
 open class ArgParser {
@@ -94,9 +93,10 @@ open class ArgParser {
       converters[subType] ?: error("Not supported type $type")
     } else
       converters[classifier] ?: error("Not supported type $type")
+    
     return Option(
       name, alias, description,
-      T::class.isSubclassOf(List::class), !type.isMarkedNullable,
+      T::class == List::class, !type.isMarkedNullable,
       defaultValue, oneOf, conveter
     )
   }

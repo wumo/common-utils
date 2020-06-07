@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
-  implementation(kotlin("reflect"))
+//  implementation(kotlin("reflect"))
   implementation("com.sun.mail:javax.mail:1.6.2")
   
   testImplementation("junit:junit:4.13")
