@@ -9,7 +9,7 @@ import kotlin.reflect.typeOf
 open class ArgParser {
   private val requiredOptions = mutableSetOf<String>()
   private val argValues = mutableMapOf<String, Option<*>>()
-  
+
   inner class Option<T>(
     internal val name: String,
     internal val alias: String?,
@@ -20,7 +20,7 @@ open class ArgParser {
     internal val oneOf: Set<T>?,
     internal val stringConvert: (String)->Any
   ): ReadOnlyProperty<ArgParser, T> {
-    
+
     init {
       check(name !in argValues) { "option $name is already defined!" }
       argValues[name] = this
@@ -31,27 +31,27 @@ open class ArgParser {
       if(required)
         requiredOptions.add(name)
     }
-    
+
     internal val values = mutableListOf<Any>()
-    
+
     override fun getValue(thisRef: ArgParser, property: KProperty<*>): T {
       check(values.isNotEmpty() || !required) { "required option $name doesn't have value" }
-      
+      if(values.isEmpty()) return null as T
       return (if(varargs) values else values[0]) as T
     }
-    
+
     internal fun process(str: String) {
       check(values.isEmpty() || varargs) { "more than value for option $name!" }
       val value = stringConvert(str)
       check(oneOf == null || (value as T) in oneOf) { "option $name value should be one of $oneOf" }
-      
+
       values.add(value)
     }
-    
+
     internal fun clear() {
       values.clear()
     }
-    
+
     override fun toString(): String {
       return buildString {
         append("-$name ")
@@ -62,7 +62,7 @@ open class ArgParser {
       }
     }
   }
-  
+
   @OptIn(ExperimentalStdlibApi::class)
   val converters = mapOf<KClassifier, (String)->Any>(
     typeOf<Byte>().classifier!! to { s: String-> s.toByte() },
@@ -78,7 +78,7 @@ open class ArgParser {
     },
     typeOf<Boolean>().classifier!! to { s: String-> s.toBoolean() }
   )
-  
+
   @OptIn(ExperimentalStdlibApi::class)
   inline fun <reified T> option(
     name: String,
@@ -100,16 +100,16 @@ open class ArgParser {
       defaultValue, oneOf, conveter
     )
   }
-  
+
   fun showUsage() {
     println("Options:")
     HashSet(argValues.values).forEach {
       println("\t$it")
     }
   }
-  
+
   val argPattern = Regex("""(?:-|--)(\w+)""")
-  
+
   fun parse(args: Array<String>) {
     try {
       val required = HashSet<String>(requiredOptions)
@@ -126,7 +126,7 @@ open class ArgParser {
             while(i < args.size && argPattern.matchEntire(args[i]) == null)
               option.process(args[i++])
         } ?: error("Bad option!")
-      
+
       check(required.isEmpty()) {
         buildString {
           append("Missing values for options:")
