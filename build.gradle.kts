@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.wumo"
-version = "1.0.6"
+version = "1.0.7"
 
 repositories {
   mavenCentral()
@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
   implementation(kotlin("stdlib-jdk8"))
-  implementation(kotlin("reflect"))
+//  implementation(kotlin("reflect"))
   implementation("com.sun.mail:javax.mail:1.6.2")
   
   testImplementation("junit:junit:4.13")
